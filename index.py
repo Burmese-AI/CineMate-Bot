@@ -1,8 +1,15 @@
 import os
+
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext, CallbackQueryHandler
-from api import fetch_genres, fetch_movies,search_movies
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (
+    ApplicationBuilder,
+    CallbackContext,
+    CallbackQueryHandler,
+    CommandHandler,
+)
+
+from api import fetch_genres, fetch_movies, search_movies
 
 load_dotenv()
 
@@ -15,7 +22,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         "Enjoy your movie journey!"
     )
     await update.message.reply_text(message)
-    
+
 
 async def help_command(update: Update, context: CallbackContext) -> None:
     help_message = (
@@ -23,12 +30,12 @@ async def help_command(update: Update, context: CallbackContext) -> None:
         "/start - Welcome message\n"
         "/help - Display help message\n"
         "/genre - Browse movies by genre\n"
-        "/movie " 
+        "/movie "
         "<name> - Search for a specific movie"
     )
     await update.message.reply_text(help_message, parse_mode='Markdown')
-    
-    
+
+
 async def genre(update: Update, context: CallbackContext) -> None:
     genres = fetch_genres()
     if genres:
@@ -38,11 +45,11 @@ async def genre(update: Update, context: CallbackContext) -> None:
 		]
         keyboard_chunks = [keyboard[i:i + 2] for i in range(0, len(keyboard), 2)]
 
-        markup = InlineKeyboardMarkup(keyboard_chunks) 
+        markup = InlineKeyboardMarkup(keyboard_chunks)
         await update.message.reply_text('What genre are you in the mood for? 🍿 Select a genre below to see the top ten movies of that genre.', reply_markup=markup)
     else:
         await update.message.reply_text('Failed to fetch genres. Please try again later.')
-        
+
 
 async def movie_search(update: Update, context: CallbackContext) -> None:
     if context.args:
@@ -52,7 +59,7 @@ async def movie_search(update: Update, context: CallbackContext) -> None:
             for movie in movies:
                 caption = (
                 f"🎬 *{movie['title']}* ({movie['release_year']})\n\n"
-                
+
 				f"📝 *Storyline*\n\n"
                 f"{movie['overview']}\n\n"
                 f"⭐ IMDb Rating: {movie['rating']:.1f}"
@@ -74,18 +81,18 @@ async def movie_search(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text('No movies found with that name. Please try another name.')
     else:
         await update.message.reply_text('Please provide a movie name to search.')
-        
+
 
 async def button(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     genre_id = query.data
-    
+
     await query.answer()
-    
+
     movies = fetch_movies(genre_id)
     if movies:
         message = "Good choice! 🍿 Here are the top 10 movies of your selected genre:\n\n"
-        
+
         await context.bot.send_message(
             chat_id=query.message.chat_id,
             text=message,
@@ -94,7 +101,7 @@ async def button(update: Update, context: CallbackContext) -> None:
         for movie in movies:
             caption = (
                 f"🎬 *{movie['title']}* ({movie['release_year']})\n\n"
-                
+
 				f"📝 *Storyline*\n\n"
                 f"{movie['overview']}\n\n"
                 f"⭐ IMDb Rating: {movie['rating']:.1f}"
@@ -114,7 +121,7 @@ async def button(update: Update, context: CallbackContext) -> None:
                 )
     else:
         await query.edit_message_text(text="Failed to fetch movies. Please try again later.")
-        
+
 
 def main() -> None:
     app = ApplicationBuilder().token(TOKEN).build()

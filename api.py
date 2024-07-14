@@ -1,4 +1,6 @@
-import os, requests
+import os
+
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -6,7 +8,7 @@ load_dotenv()
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 def fetch_genres():
-    url = f"https://api.themoviedb.org/3/genre/movie/list"
+    url = "https://api.themoviedb.org/3/genre/movie/list"
     params = {
         "api_key": TMDB_API_KEY,
         "sort_by": "popularity.desc",
@@ -30,7 +32,7 @@ def fetch_genres():
         return None
 
 def fetch_movies(genre_id):
-    url = f"https://api.themoviedb.org/3/discover/movie"
+    url = "https://api.themoviedb.org/3/discover/movie"
     params = {
         "api_key": TMDB_API_KEY,
         "with_genres": genre_id,
@@ -55,10 +57,10 @@ def fetch_movies(genre_id):
     except requests.RequestException as e:
         print(f"Error fetching movies from TMDB API: {e}")
         return None
-    
+
 
 def search_movies(movie_name):
-    url = f"https://api.themoviedb.org/3/search/movie"
+    url = "https://api.themoviedb.org/3/search/movie"
     params = {
         "api_key": TMDB_API_KEY,
         "query": movie_name,
