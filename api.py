@@ -1,4 +1,5 @@
 import os
+from typing import Optional, Union
 
 import requests
 from dotenv import load_dotenv
@@ -7,7 +8,7 @@ load_dotenv()
 
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
-def fetch_genres():
+def fetch_genres() -> Optional[dict[int, str]]:
     url = "https://api.themoviedb.org/3/genre/movie/list"
     params = {
         "api_key": TMDB_API_KEY,
@@ -31,7 +32,7 @@ def fetch_genres():
         print(f"Error fetching genres from TMDB API: {e}")
         return None
 
-def fetch_movies(genre_id):
+def fetch_movies(genre_id: int) -> Optional[list[dict[str, Union[str, float]]]]:
     url = "https://api.themoviedb.org/3/discover/movie"
     params = {
         "api_key": TMDB_API_KEY,
@@ -59,7 +60,7 @@ def fetch_movies(genre_id):
         return None
 
 
-def search_movies(movie_name):
+def search_movies(movie_name: str) -> Optional[list[dict[str, Union[str, float]]]]:
     url = "https://api.themoviedb.org/3/search/movie"
     params = {
         "api_key": TMDB_API_KEY,
