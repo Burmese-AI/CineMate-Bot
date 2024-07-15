@@ -1,11 +1,11 @@
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 import requests
 
 from .config import TMDB_API_KEY
 
 
-def fetch_movies(genre_id: int) -> Optional[List[Dict[str, Union[str, float]]]]:
+def fetch_movies(genre_id: int) -> Optional[list[dict[str, Union[str, float]]]]:
     url = "https://api.themoviedb.org/3/discover/movie"
     params = {
         "api_key": TMDB_API_KEY,
